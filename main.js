@@ -11,6 +11,10 @@ const todoListEl = document.getElementById('todoList');
 const emptyStateEl = document.getElementById('emptyState');
 const pageSelect = document.getElementById('pageSelect');
 const goPageBtn = document.getElementById('goPageBtn');
+const dayModalOverlay = document.getElementById('dayModalOverlay');
+const dayModalClose = document.getElementById('dayModalClose');
+const dayModalTitle = document.getElementById('dayModalTitle');
+const dayModalList = document.getElementById('dayModalList');
 
 const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const now = new Date();
@@ -78,6 +82,12 @@ function renderCalendar() {
 		if (dayAssignments.length > 0) {
 			const hasOverdue = dayAssignments.some((assignment) => assignment.isOverdue);
 			cell.classList.add(hasOverdue ? 'day-overdue' : 'day-has-due');
+			if (dayAssignments.length > 1) {
+				cell.classList.add('day-clickable');
+				cell.addEventListener('click', () => {
+					openDayAssignmentsModal(cellDate, dayAssignments);
+				});
+			}
 		}
 
 		const header = document.createElement('div');
@@ -114,6 +124,45 @@ function renderCalendar() {
 		cell.appendChild(eventList);
 		calendarGrid.appendChild(cell);
 	}
+}
+
+function openDayAssignmentsModal(cellDate, assignments) {
+	if (!dayModalOverlay || !dayModalTitle || !dayModalList) return;
+	const friendlyDate = cellDate.toLocaleDateString(undefined, {
+		weekday: 'long',
+		month: 'long',
+		day: 'numeric',
+		year: 'numeric',
+	});
+	dayModalTitle.textContent = `Assignments for ${friendlyDate}`;
+	dayModalList.innerHTML = '';
+
+	assignments.forEach((assignment) => {
+		const item = document.createElement('li');
+		item.className = `modal-item${assignment.isOverdue ? ' overdue' : ''}`;
+
+		const title = document.createElement('p');
+		title.className = 'modal-item-title';
+		title.textContent = `${assignment.courseLabel || assignment.courseName || 'Course'}: ${assignment.title || 'Assignment'}`;
+
+		const meta = document.createElement('p');
+		meta.className = 'modal-item-meta';
+		const dueText = assignment.dueTime ? `${formatTime(assignment.dueTime)}` : 'End of day';
+		meta.textContent = assignment.isOverdue ? `Overdue - Due ${dueText}` : `Due ${dueText}`;
+
+		item.appendChild(title);
+		item.appendChild(meta);
+		dayModalList.appendChild(item);
+	});
+
+	dayModalOverlay.classList.add('open');
+	dayModalOverlay.setAttribute('aria-hidden', 'false');
+}
+
+function closeDayAssignmentsModal() {
+	if (!dayModalOverlay) return;
+	dayModalOverlay.classList.remove('open');
+	dayModalOverlay.setAttribute('aria-hidden', 'true');
 }
 
 function getAssignmentsByDueDate() {
@@ -361,3 +410,10 @@ if (pageSelect) {
 
 goPageBtn?.addEventListener('click', goToSelectedPage);
 pageSelect?.addEventListener('change', goToSelectedPage);
+dayModalClose?.addEventListener('click', closeDayAssignmentsModal);
+dayModalOverlay?.addEventListener('click', (event) => {
+	if (event.target === dayModalOverlay) closeDayAssignmentsModal();
+});
+document.addEventListener('keydown', (event) => {
+	if (event.key === 'Escape') closeDayAssignmentsModal();
+});

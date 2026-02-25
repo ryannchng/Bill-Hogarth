@@ -1,0 +1,499 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Habit Journal</title>
+  <style>
+    :root {
+      --bg: #f6f9ff;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #64748b;
+      --border: #dbe5f1;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --dot: #0f766e;
+      --danger: #ef4444;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      color: var(--text);
+      background: linear-gradient(180deg, #edf4ff 0%, var(--bg) 100%);
+      padding: 24px;
+    }
+
+    .container {
+      max-width: 1240px;
+      margin: 0 auto;
+      display: grid;
+      gap: 16px;
+    }
+
+    .side-nav {
+      position: fixed;
+      right: 18px;
+      top: 18px;
+      z-index: 20;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.12);
+    }
+
+    .nav-select {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px;
+      font-size: 0.9rem;
+      color: var(--text);
+      background: #fff;
+      min-width: 165px;
+    }
+
+    .go-btn {
+      border: 0;
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #fff;
+      background: var(--accent);
+      cursor: pointer;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px;
+      box-shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
+    }
+
+    .head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 1.8rem;
+    }
+
+    .subtitle {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .month-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .month-btn {
+      border: 0;
+      border-radius: 8px;
+      width: 34px;
+      height: 34px;
+      background: var(--accent);
+      color: #fff;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .month-label {
+      font-size: 1rem;
+      font-weight: 700;
+      min-width: 150px;
+      text-align: center;
+    }
+
+    .add-row {
+      margin-top: 14px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .add-input {
+      flex: 1;
+      min-width: 200px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 9px 10px;
+      font-size: 0.9rem;
+    }
+
+    .add-btn {
+      border: 0;
+      border-radius: 8px;
+      padding: 9px 12px;
+      background: var(--accent);
+      color: #fff;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .table-wrap {
+      overflow: auto;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      margin-top: 12px;
+      background: #fff;
+    }
+
+    table {
+      border-collapse: collapse;
+      min-width: 900px;
+      width: 100%;
+    }
+
+    th,
+    td {
+      border-bottom: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      text-align: center;
+      padding: 7px 4px;
+      font-size: 0.8rem;
+    }
+
+    th:first-child,
+    td:first-child {
+      position: sticky;
+      left: 0;
+      background: #fff;
+      z-index: 2;
+      text-align: left;
+      min-width: 210px;
+      max-width: 210px;
+      padding: 8px 10px;
+    }
+
+    th {
+      background: #eff6ff;
+      font-weight: 700;
+    }
+
+    .habit-name-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .habit-name {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-weight: 600;
+      font-size: 0.86rem;
+    }
+
+    .habit-delete {
+      border: 0;
+      border-radius: 6px;
+      padding: 5px 8px;
+      font-size: 0.72rem;
+      color: #fff;
+      background: var(--danger);
+      cursor: pointer;
+    }
+
+    .day-cell {
+      cursor: pointer;
+      min-width: 30px;
+      width: 30px;
+    }
+
+    .dot {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border-radius: 999px;
+      border: 1px solid #94a3b8;
+      background: transparent;
+    }
+
+    .dot.checked {
+      background: var(--dot);
+      border-color: var(--dot);
+    }
+
+    .empty {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin: 0;
+      padding: 6px 2px 0;
+    }
+
+    @media (max-width: 860px) {
+      body {
+        padding-top: 88px;
+      }
+
+      .side-nav {
+        left: 12px;
+        right: 12px;
+        top: 12px;
+      }
+
+      .nav-select {
+        flex: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="side-nav" aria-label="Quick navigation">
+    <select id="pageSelect" class="nav-select">
+      <option value="index.html">Planner</option>
+      <option value="coursework.html">Coursework</option>
+      <option value="money.html">Money</option>
+      <option value="habit.html" selected>Habit</option>
+    </select>
+    <button id="goPageBtn" class="go-btn" type="button">Go</button>
+  </nav>
+
+  <main class="container">
+    <section class="card">
+      <div class="head">
+        <div>
+          <h1>Habit Journal</h1>
+          <p class="subtitle">Bullet-journal style monthly tracker. Click dots to mark done days.</p>
+        </div>
+        <div class="month-controls">
+          <button id="prevMonthBtn" class="month-btn" type="button" aria-label="Previous month">&lt;</button>
+          <div id="monthLabel" class="month-label"></div>
+          <button id="nextMonthBtn" class="month-btn" type="button" aria-label="Next month">&gt;</button>
+        </div>
+      </div>
+
+      <div class="add-row">
+        <input id="habitInput" class="add-input" type="text" maxlength="60" placeholder="Add a habit (e.g., Drink water)" />
+        <button id="addHabitBtn" class="add-btn" type="button">Add Habit</button>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead id="habitHead"></thead>
+          <tbody id="habitBody"></tbody>
+        </table>
+      </div>
+      <p id="emptyState" class="empty">No habits yet for this month.</p>
+    </section>
+  </main>
+
+  <script>
+    const pageSelect = document.getElementById('pageSelect');
+    const goPageBtn = document.getElementById('goPageBtn');
+    const prevMonthBtn = document.getElementById('prevMonthBtn');
+    const nextMonthBtn = document.getElementById('nextMonthBtn');
+    const monthLabel = document.getElementById('monthLabel');
+    const habitInput = document.getElementById('habitInput');
+    const addHabitBtn = document.getElementById('addHabitBtn');
+    const habitHead = document.getElementById('habitHead');
+    const habitBody = document.getElementById('habitBody');
+    const emptyState = document.getElementById('emptyState');
+
+    const STORAGE_KEY = 'habitJournalData';
+    const weekdays = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+    let viewDate = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+
+    function goToSelectedPage() {
+      const selected = pageSelect?.value;
+      if (!selected) return;
+      window.location.href = selected;
+    }
+
+    function monthKey(date) {
+      return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+    }
+
+    function monthLabelText(date) {
+      return date.toLocaleDateString(undefined, { month: 'long', year: 'numeric' });
+    }
+
+    function daysInMonth(date) {
+      return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+    }
+
+    function loadStore() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        const parsed = raw ? JSON.parse(raw) : {};
+        return parsed && typeof parsed === 'object' ? parsed : {};
+      } catch {
+        return {};
+      }
+    }
+
+    function saveStore(store) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(store));
+    }
+
+    function getMonthData() {
+      const store = loadStore();
+      const key = monthKey(viewDate);
+      const value = store[key];
+      if (!value || !Array.isArray(value.habits)) return { habits: [] };
+      return {
+        habits: value.habits.map((habit) => ({
+          id: String(habit.id || ''),
+          name: String(habit.name || ''),
+          checks: habit.checks && typeof habit.checks === 'object' ? habit.checks : {},
+        })),
+      };
+    }
+
+    function setMonthData(data) {
+      const store = loadStore();
+      store[monthKey(viewDate)] = data;
+      saveStore(store);
+    }
+
+    function renderHeader() {
+      const count = daysInMonth(viewDate);
+      habitHead.innerHTML = '';
+      const row = document.createElement('tr');
+
+      const first = document.createElement('th');
+      first.textContent = 'Habit';
+      row.appendChild(first);
+
+      for (let day = 1; day <= count; day += 1) {
+        const th = document.createElement('th');
+        const d = new Date(viewDate.getFullYear(), viewDate.getMonth(), day);
+        th.textContent = `${day} ${weekdays[d.getDay()]}`;
+        row.appendChild(th);
+      }
+
+      habitHead.appendChild(row);
+    }
+
+    function renderBody() {
+      const data = getMonthData();
+      habitBody.innerHTML = '';
+      emptyState.style.display = data.habits.length ? 'none' : 'block';
+
+      data.habits.forEach((habit) => {
+        const row = document.createElement('tr');
+
+        const nameCell = document.createElement('td');
+        const wrap = document.createElement('div');
+        wrap.className = 'habit-name-wrap';
+        const label = document.createElement('span');
+        label.className = 'habit-name';
+        label.textContent = habit.name;
+        const delBtn = document.createElement('button');
+        delBtn.type = 'button';
+        delBtn.className = 'habit-delete';
+        delBtn.dataset.habitId = habit.id;
+        delBtn.textContent = 'Delete';
+        wrap.appendChild(label);
+        wrap.appendChild(delBtn);
+        nameCell.appendChild(wrap);
+        row.appendChild(nameCell);
+
+        const count = daysInMonth(viewDate);
+        for (let day = 1; day <= count; day += 1) {
+          const key = String(day).padStart(2, '0');
+          const td = document.createElement('td');
+          td.className = 'day-cell';
+          td.dataset.habitId = habit.id;
+          td.dataset.dayKey = key;
+          const dot = document.createElement('span');
+          dot.className = `dot${habit.checks[key] ? ' checked' : ''}`;
+          td.appendChild(dot);
+          row.appendChild(td);
+        }
+
+        habitBody.appendChild(row);
+      });
+    }
+
+    function render() {
+      monthLabel.textContent = monthLabelText(viewDate);
+      renderHeader();
+      renderBody();
+    }
+
+    function addHabit() {
+      const name = habitInput.value.trim();
+      if (!name) return;
+      const data = getMonthData();
+      data.habits.push({
+        id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+        name,
+        checks: {},
+      });
+      setMonthData(data);
+      habitInput.value = '';
+      render();
+    }
+
+    function toggleHabitDay(habitId, dayKey) {
+      const data = getMonthData();
+      const habit = data.habits.find((item) => item.id === habitId);
+      if (!habit) return;
+      habit.checks[dayKey] = !Boolean(habit.checks[dayKey]);
+      if (!habit.checks[dayKey]) delete habit.checks[dayKey];
+      setMonthData(data);
+      renderBody();
+    }
+
+    function deleteHabit(habitId) {
+      const data = getMonthData();
+      data.habits = data.habits.filter((item) => item.id !== habitId);
+      setMonthData(data);
+      render();
+    }
+
+    prevMonthBtn?.addEventListener('click', () => {
+      viewDate = new Date(viewDate.getFullYear(), viewDate.getMonth() - 1, 1);
+      render();
+    });
+
+    nextMonthBtn?.addEventListener('click', () => {
+      viewDate = new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 1);
+      render();
+    });
+
+    addHabitBtn?.addEventListener('click', addHabit);
+    habitInput?.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') addHabit();
+    });
+
+    habitBody?.addEventListener('click', (event) => {
+      const deleteBtn = event.target.closest('.habit-delete');
+      if (deleteBtn) {
+        deleteHabit(deleteBtn.dataset.habitId);
+        return;
+      }
+
+      const cell = event.target.closest('.day-cell');
+      if (!cell) return;
+      toggleHabitDay(cell.dataset.habitId, cell.dataset.dayKey);
+    });
+
+    goPageBtn?.addEventListener('click', goToSelectedPage);
+    pageSelect?.addEventListener('change', goToSelectedPage);
+
+    render();
+  </script>
+</body>
+</html>
