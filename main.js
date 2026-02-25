@@ -169,7 +169,7 @@ nextMonthBtn?.addEventListener('click', () => {
 
 addTodoBtn?.addEventListener('click', addTodo);
 todoInput?.addEventListener('keydown', (event) => {
-  if (event.key === 'Enter') addTodo();
+	if (event.key === 'Enter') addTodo();
 });
 
 todayDateEl.textContent = now.toLocaleDateString(undefined, {
