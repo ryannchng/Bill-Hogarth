@@ -50,11 +50,13 @@ function renderCalendar() {
 	const startDayOfWeek = firstDay.getDay();
 	const daysInMonth = new Date(year, month + 1, 0).getDate();
 	const prevMonthDays = new Date(year, month, 0).getDate();
+	const weekRowCount = Math.ceil((startDayOfWeek + daysInMonth) / 7);
+	const totalCells = weekRowCount * 7;
 
 	monthTitle.textContent = getMonthYearLabel(viewDate);
 	calendarGrid.innerHTML = '';
 
-	for (let i = 0; i < 42; i += 1) {
+	for (let i = 0; i < totalCells; i += 1) {
 		const cell = document.createElement('div');
 		cell.className = 'day-cell';
 		let dayNum;
@@ -287,7 +289,7 @@ function syncAssignmentTodosForToday() {
 			const courseLabel = assignment.courseLabel || assignment.courseName || 'Course';
 			assignmentTodos.push({
 				assignmentKey,
-				text: `${assignment.isOverdue ? '[overdue] ' : ''}${courseLabel}: ${assignment.title} (Due ${dueLabel})`,
+				text: `${assignment.isOverdue ? '[Overdue] ' : ''}${courseLabel}: ${assignment.title} (Due ${dueLabel})`,
 			});
 		});
 	});
