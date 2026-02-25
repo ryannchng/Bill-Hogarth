@@ -120,11 +120,6 @@
 			cursor: pointer;
 		}
 
-		.file-input {
-			font-size: 0.86rem;
-			color: #334155;
-		}
-
 		.help {
 			margin-top: 10px;
 			color: var(--muted);
@@ -346,17 +341,15 @@
 	<main class="container">
 		<section class="card">
 			<h1>Coursework</h1>
-			<p>Paste the full Student Reports HTML below, then generate a course summary page.</p>
+			<p>Login to Teachassist and press ctrl + u to view the page source. Paste all the text below.</p>
 
 			<label class="input-label" for="reportHtmlInput">Student Report HTML</label>
 			<textarea id="reportHtmlInput" class="html-input" placeholder="Paste your full HTML report here..."></textarea>
 
 			<div class="controls">
 				<button id="generateBtn" class="action-btn" type="button">Generate Course List</button>
-				<input id="htmlFileInput" class="file-input" type="file" accept=".html,.htm,text/html" />
-				<button id="importFileBtn" class="action-btn" type="button">Import HTML File</button>
 			</div>
-			<p class="help">Direct site login fetch is blocked by browser security. Use paste or import a saved HTML/source file.</p>
+			<p class="help">Direct site login fetch is blocked by browser security. Paste the saved HTML/source text above.</p>
 			<p id="status" class="status"></p>
 
 			<section id="generatedSection" class="generated">
@@ -385,8 +378,6 @@
 		const goPageBtn = document.getElementById('goPageBtn');
 		const reportHtmlInput = document.getElementById('reportHtmlInput');
 		const generateBtn = document.getElementById('generateBtn');
-		const htmlFileInput = document.getElementById('htmlFileInput');
-		const importFileBtn = document.getElementById('importFileBtn');
 		const statusEl = document.getElementById('status');
 		const generatedSection = document.getElementById('generatedSection');
 		const coursesTableBody = document.getElementById('coursesTableBody');
@@ -417,7 +408,7 @@
 
 				const [codePart, namePart] = courseCell.split(':');
 				const code = (codePart || '').trim();
-				const detail = (namePart || '').trim();
+				const detail = stripBlockFromCourseName((namePart || '').trim());
 
 				courses.push({
 					code,
@@ -432,6 +423,14 @@
 			return courses;
 		}
 
+		function stripBlockFromCourseName(name) {
+			return String(name || '')
+				.replace(/\bblock\b(?:\s*[-:]?\s*[a-z0-9]+)?/gi, '')
+				.replace(/\(\s*\)/g, '')
+				.replace(/\s{2,}/g, ' ')
+				.trim();
+		}
+
 		function loadCourses() {
 			try {
 				const raw = localStorage.getItem('courseAveragesData');
@@ -439,6 +438,7 @@
 				return Array.isArray(parsed)
 					? parsed.map((course) => ({
 							...course,
+							courseName: stripBlockFromCourseName(course.courseName),
 							assignments: normalizeAssignments(course.assignments),
 						}))
 					: [];
@@ -635,30 +635,9 @@
 			generatedSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
 		}
 
-		function importFromFile() {
-			const file = htmlFileInput?.files?.[0];
-			if (!file) {
-				statusEl.textContent = 'Choose an HTML file first.';
-				return;
-			}
-
-			const reader = new FileReader();
-			reader.onload = () => {
-				const text = String(reader.result || '');
-				reportHtmlInput.value = text;
-				statusEl.textContent = `Loaded ${file.name}. Parsing...`;
-				generateCoursePage();
-			};
-			reader.onerror = () => {
-				statusEl.textContent = 'Failed to read the selected file.';
-			};
-			reader.readAsText(file);
-		}
-
 		goPageBtn?.addEventListener('click', goToSelectedPage);
 		pageSelect?.addEventListener('change', goToSelectedPage);
 		generateBtn?.addEventListener('click', generateCoursePage);
-		importFileBtn?.addEventListener('click', importFromFile);
 
 		coursesTableBody?.addEventListener('click', (event) => {
 			const addTarget = event.target.closest('[data-add-assignment]');

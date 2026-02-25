@@ -13,7 +13,7 @@
       --border: #dbe5f1;
       --accent: #2563eb;
       --accent-hover: #1d4ed8;
-      --dot: #0f766e;
+      --dot: #2563eb;
       --danger: #ef4444;
     }
 
@@ -176,7 +176,8 @@
     td:first-child {
       position: sticky;
       left: 0;
-      background: #fff;
+      background: #e5e7eb;
+      box-shadow: inset 0 0 0 1px var(--border);
       z-index: 2;
       text-align: left;
       min-width: 210px;
@@ -187,6 +188,28 @@
     th {
       background: #eff6ff;
       font-weight: 700;
+    }
+
+    .habit-head-day {
+      min-width: 36px;
+      line-height: 1.05;
+    }
+
+    .habit-day-num {
+      display: block;
+      font-size: 0.86rem;
+      font-weight: 800;
+      color: #1f2937;
+    }
+
+    .habit-day-name {
+      display: block;
+      margin-top: 2px;
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
     }
 
     .habit-name-wrap {
@@ -202,6 +225,14 @@
       text-overflow: ellipsis;
       font-weight: 600;
       font-size: 0.86rem;
+    }
+
+    .habit-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+      flex: 1;
     }
 
     .habit-delete {
@@ -239,6 +270,48 @@
       font-size: 0.9rem;
       margin: 0;
       padding: 6px 2px 0;
+    }
+
+    .journal {
+      margin-top: 14px;
+      border-top: 1px solid var(--border);
+      padding-top: 12px;
+    }
+
+    .journal-title {
+      margin: 0 0 6px;
+      font-size: 1rem;
+    }
+
+    .journal-help {
+      margin: 0 0 8px;
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
+    .journal-input {
+      width: 100%;
+      min-height: 130px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font: inherit;
+      font-size: 0.9rem;
+      resize: vertical;
+      background: #fff;
+    }
+
+    .journal-row {
+      margin-top: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .journal-status {
+      min-height: 1rem;
+      font-size: 0.82rem;
+      color: var(--muted);
     }
 
     @media (max-width: 860px) {
@@ -293,6 +366,16 @@
         </table>
       </div>
       <p id="emptyState" class="empty">No habits yet for this month.</p>
+
+      <section class="journal">
+        <h2 class="journal-title">Journal</h2>
+        <p class="journal-help">Write a quick reflection for this month.</p>
+        <textarea id="journalInput" class="journal-input" placeholder="How is this month going?"></textarea>
+        <div class="journal-row">
+          <button id="saveJournalBtn" class="add-btn" type="button">Save Journal</button>
+          <span id="journalStatus" class="journal-status"></span>
+        </div>
+      </section>
     </section>
   </main>
 
@@ -307,9 +390,12 @@
     const habitHead = document.getElementById('habitHead');
     const habitBody = document.getElementById('habitBody');
     const emptyState = document.getElementById('emptyState');
+    const journalInput = document.getElementById('journalInput');
+    const saveJournalBtn = document.getElementById('saveJournalBtn');
+    const journalStatus = document.getElementById('journalStatus');
 
     const STORAGE_KEY = 'habitJournalData';
-    const weekdays = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+    const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     let viewDate = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
 
     function goToSelectedPage() {
@@ -355,6 +441,7 @@
           name: String(habit.name || ''),
           checks: habit.checks && typeof habit.checks === 'object' ? habit.checks : {},
         })),
+        notes: String(value.notes || ''),
       };
     }
 
@@ -362,6 +449,26 @@
       const store = loadStore();
       store[monthKey(viewDate)] = data;
       saveStore(store);
+    }
+
+    function getStreakDayKeySet(habit) {
+      const today = new Date();
+      const isCurrentMonth =
+        viewDate.getFullYear() === today.getFullYear() &&
+        viewDate.getMonth() === today.getMonth();
+      const endDay = isCurrentMonth ? today.getDate() : daysInMonth(viewDate);
+      const streakDays = new Set();
+
+      for (let day = endDay; day >= 1; day -= 1) {
+        const key = String(day).padStart(2, '0');
+        if (habit.checks[key]) {
+          streakDays.add(key);
+        } else {
+          break;
+        }
+      }
+
+      return streakDays;
     }
 
     function renderHeader() {
@@ -375,8 +482,12 @@
 
       for (let day = 1; day <= count; day += 1) {
         const th = document.createElement('th');
+        th.className = 'habit-head-day';
         const d = new Date(viewDate.getFullYear(), viewDate.getMonth(), day);
-        th.textContent = `${day} ${weekdays[d.getDay()]}`;
+        th.innerHTML = `
+          <span class="habit-day-num">${day}</span>
+          <span class="habit-day-name">${weekdays[d.getDay()]}</span>
+        `;
         row.appendChild(th);
       }
 
@@ -390,19 +501,23 @@
 
       data.habits.forEach((habit) => {
         const row = document.createElement('tr');
+        const streakDayKeys = getStreakDayKeySet(habit);
 
         const nameCell = document.createElement('td');
         const wrap = document.createElement('div');
         wrap.className = 'habit-name-wrap';
+        const meta = document.createElement('div');
+        meta.className = 'habit-meta';
         const label = document.createElement('span');
         label.className = 'habit-name';
         label.textContent = habit.name;
+        meta.appendChild(label);
         const delBtn = document.createElement('button');
         delBtn.type = 'button';
         delBtn.className = 'habit-delete';
         delBtn.dataset.habitId = habit.id;
         delBtn.textContent = 'Delete';
-        wrap.appendChild(label);
+        wrap.appendChild(meta);
         wrap.appendChild(delBtn);
         nameCell.appendChild(wrap);
         row.appendChild(nameCell);
@@ -412,6 +527,7 @@
           const key = String(day).padStart(2, '0');
           const td = document.createElement('td');
           td.className = 'day-cell';
+          if (streakDayKeys.has(key)) td.classList.add('day-streak');
           td.dataset.habitId = habit.id;
           td.dataset.dayKey = key;
           const dot = document.createElement('span');
@@ -425,9 +541,12 @@
     }
 
     function render() {
+      const data = getMonthData();
       monthLabel.textContent = monthLabelText(viewDate);
       renderHeader();
       renderBody();
+      if (journalInput) journalInput.value = data.notes || '';
+      if (journalStatus) journalStatus.textContent = '';
     }
 
     function addHabit() {
@@ -461,6 +580,18 @@
       render();
     }
 
+    function saveJournal() {
+      const data = getMonthData();
+      data.notes = journalInput?.value.trim() || '';
+      setMonthData(data);
+      if (journalStatus) {
+        journalStatus.textContent = 'Saved';
+        window.setTimeout(() => {
+          if (journalStatus.textContent === 'Saved') journalStatus.textContent = '';
+        }, 1200);
+      }
+    }
+
     prevMonthBtn?.addEventListener('click', () => {
       viewDate = new Date(viewDate.getFullYear(), viewDate.getMonth() - 1, 1);
       render();
@@ -486,6 +617,14 @@
       const cell = event.target.closest('.day-cell');
       if (!cell) return;
       toggleHabitDay(cell.dataset.habitId, cell.dataset.dayKey);
+    });
+
+    saveJournalBtn?.addEventListener('click', saveJournal);
+    journalInput?.addEventListener('keydown', (event) => {
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 's') {
+        event.preventDefault();
+        saveJournal();
+      }
     });
 
     goPageBtn?.addEventListener('click', goToSelectedPage);

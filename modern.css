@@ -18,9 +18,21 @@
 body {
 	font-family: "Manrope", "Segoe UI", Tahoma, sans-serif !important;
 	background:
-		radial-gradient(900px 500px at 0% 0%, #dce8ff 0%, transparent 60%),
-		radial-gradient(900px 500px at 100% 100%, #dff7ef 0%, transparent 58%),
-		linear-gradient(180deg, var(--modern-bg-1) 0%, var(--modern-bg-2) 100%) !important;
+		/* soft paper aging */
+		radial-gradient(1100px 520px at 0% -10%, rgba(186, 166, 128, 0.16) 0%, transparent 62%),
+		radial-gradient(1000px 480px at 100% 110%, rgba(160, 140, 106, 0.12) 0%, transparent 60%),
+		/* red margin line */
+		linear-gradient(90deg, transparent 0 56px, rgba(179, 83, 67, 0.36) 56px 58px, transparent 58px 100%),
+		/* blue ruled lines */
+		repeating-linear-gradient(
+			180deg,
+			rgba(86, 113, 166, 0.2) 0px,
+			rgba(86, 113, 166, 0.2) 1px,
+			transparent 1px,
+			transparent 34px
+		),
+		linear-gradient(180deg, #ece5d7 0%, #e3dac8 100%) !important;
+	background-attachment: fixed;
 }
 
 .card {
@@ -139,6 +151,15 @@ th {
 
 .day-cell:hover {
 	box-shadow: inset 0 0 0 1px #c2c2c2;
+}
+
+.day-cell.day-streak {
+	background: #e0f2fe !important;
+	box-shadow: inset 0 0 0 1px #7dd3fc, inset 0 -3px 0 #0284c7 !important;
+}
+
+.day-cell.day-streak:hover {
+	box-shadow: inset 0 0 0 1px #38bdf8, inset 0 -3px 0 #0369a1 !important;
 }
 
 .modal-card {

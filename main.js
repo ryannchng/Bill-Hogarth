@@ -284,11 +284,10 @@ function syncAssignmentTodosForToday() {
 			if (!assignment.isOverdue && dueDate !== todayKey) return;
 			const assignmentKey = `${assignment.courseName}|${assignment.title}|${dueDate}|${assignment.dueTime || ''}`;
 			const dueLabel = assignment.dueTime ? `${dueDate} ${formatTime(assignment.dueTime)}` : dueDate;
-			const assignmentLabel = assignment.isOverdue ? 'Overdue' : 'Due';
 			const courseLabel = assignment.courseLabel || assignment.courseName || 'Course';
 			assignmentTodos.push({
 				assignmentKey,
-				text: `[${assignmentLabel}] ${courseLabel}: ${assignment.title} (Due ${dueLabel})`,
+				text: `${assignment.isOverdue ? '[overdue] ' : ''}${courseLabel}: ${assignment.title} (Due ${dueLabel})`,
 			});
 		});
 	});
@@ -297,10 +296,12 @@ function syncAssignmentTodosForToday() {
 	const nextTodos = todayTodos.filter((todo) => todo.source !== 'assignment' || assignmentKeySet.has(todo.assignmentKey));
 
 	assignmentTodos.forEach((assignmentTodo) => {
-		const exists = nextTodos.some(
+		const existingTodo = nextTodos.find(
 			(todo) => todo.source === 'assignment' && todo.assignmentKey === assignmentTodo.assignmentKey
 		);
-		if (!exists) {
+		if (existingTodo) {
+			existingTodo.text = assignmentTodo.text;
+		} else {
 			nextTodos.push({
 				text: assignmentTodo.text,
 				done: false,
