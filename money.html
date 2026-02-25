@@ -1,11 +1,11 @@
 <!doctype html>
 <html lang="en">
-  <head>
+<head>
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<title>Money Tracker</title>
 	<style>
-	  :root {
+	:root {
 		--bg: #f6f9ff;
 		--card: #ffffff;
 		--text: #1f2937;
@@ -13,29 +13,29 @@
 		--border: #dbe5f1;
 		--accent: #2563eb;
 		--danger: #ef4444;
-	  }
+	}
 
-	  * {
+	* {
 		box-sizing: border-box;
-	  }
+	}
 
-	  body {
+	body {
 		margin: 0;
 		min-height: 100vh;
 		font-family: "Segoe UI", Tahoma, sans-serif;
 		color: var(--text);
 		background: linear-gradient(180deg, #edf4ff 0%, var(--bg) 100%);
 		padding: 24px;
-	  }
+	}
 
-	  .container {
+	.container {
 		max-width: 980px;
 		margin: 0 auto;
 		display: grid;
 		gap: 16px;
-	  }
+	}
 
-	  .side-nav {
+	.side-nav {
 		position: fixed;
 		right: 18px;
 		top: 18px;
@@ -48,9 +48,9 @@
 		align-items: center;
 		gap: 8px;
 		box-shadow: 0 8px 20px rgba(15, 23, 42, 0.12);
-	  }
+	}
 
-	  .nav-select {
+	.nav-select {
 		border: 1px solid var(--border);
 		border-radius: 8px;
 		padding: 8px;
@@ -58,9 +58,9 @@
 		color: var(--text);
 		background: #fff;
 		min-width: 165px;
-	  }
+	}
 
-	  .go-btn {
+	.go-btn {
 		border: 0;
 		border-radius: 8px;
 		padding: 8px 12px;
@@ -69,93 +69,93 @@
 		color: #fff;
 		background: var(--accent);
 		cursor: pointer;
-	  }
+	}
 
-	  .card {
+	.card {
 		background: var(--card);
 		border: 1px solid var(--border);
 		border-radius: 12px;
 		padding: 20px;
 		box-shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
-	  }
+	}
 
-	  h1 {
+	h1 {
 		margin: 0 0 6px;
 		font-size: 1.8rem;
-	  }
+	}
 
-	  .subtitle {
+	.subtitle {
 		margin: 0;
 		color: var(--muted);
-	  }
+	}
 
-	  .stats {
+	.stats {
 		display: grid;
 		grid-template-columns: repeat(3, minmax(0, 1fr));
 		gap: 10px;
 		margin-top: 12px;
-	  }
+	}
 
-	  .stat {
+	.stat {
 		border: 1px solid var(--border);
 		border-radius: 10px;
 		padding: 12px;
 		background: #fff;
-	  }
+	}
 
-	  .stat-label {
+	.stat-label {
 		margin: 0 0 4px;
 		color: var(--muted);
 		font-size: 0.82rem;
 		text-transform: uppercase;
 		letter-spacing: 0.03em;
 		font-weight: 700;
-	  }
+	}
 
-	  .stat-value {
+	.stat-value {
 		margin: 0;
 		font-size: 1.25rem;
 		font-weight: 800;
-	  }
+	}
 
-	  .form-grid {
+	.form-grid {
 		display: grid;
 		grid-template-columns: 1fr 1fr;
 		gap: 10px;
 		margin-top: 12px;
-	  }
+	}
 
-	  .field {
+	.field {
 		display: grid;
 		gap: 6px;
-	  }
+	}
 
-	  .field.full {
+	.field.full {
 		grid-column: 1 / -1;
-	  }
+	}
 
-	  label {
+	label {
 		font-size: 0.85rem;
 		color: #334155;
 		font-weight: 700;
-	  }
+	}
 
-	  input,
-	  select {
+	input,
+	select {
 		border: 1px solid var(--border);
 		border-radius: 8px;
 		padding: 9px 10px;
 		font-size: 0.9rem;
-	  }
+	}
 
-	  .actions {
+	.actions {
 		margin-top: 10px;
 		display: flex;
 		gap: 8px;
 		flex-wrap: wrap;
-	  }
+	}
 
-	  .btn {
+	.btn {
 		border: 0;
 		border-radius: 8px;
 		padding: 9px 12px;
@@ -164,21 +164,21 @@
 		color: #fff;
 		background: var(--accent);
 		cursor: pointer;
-	  }
+	}
 
-	  .btn-secondary {
+	.btn-secondary {
 		background: #334155;
-	  }
+	}
 
-	  .list {
+	.list {
 		margin: 0;
 		padding: 0;
 		list-style: none;
 		display: grid;
 		gap: 8px;
-	  }
+	}
 
-	  .row {
+	.row {
 		display: grid;
 		grid-template-columns: auto 1fr auto auto;
 		gap: 10px;
@@ -187,9 +187,9 @@
 		border-radius: 10px;
 		padding: 10px;
 		background: #fff;
-	  }
+	}
 
-	  .pill {
+	.pill {
 		font-size: 0.75rem;
 		background: #e2e8f0;
 		border-radius: 999px;
@@ -197,22 +197,22 @@
 		color: #334155;
 		font-weight: 700;
 		white-space: nowrap;
-	  }
+	}
 
-	  .note {
+	.note {
 		color: var(--muted);
 		font-size: 0.85rem;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
 		max-width: 440px;
-	  }
+	}
 
-	  .amount {
+	.amount {
 		font-weight: 800;
-	  }
+	}
 
-	  .delete {
+	.delete {
 		border: 0;
 		border-radius: 7px;
 		padding: 7px 9px;
@@ -221,194 +221,194 @@
 		color: #fff;
 		background: var(--danger);
 		cursor: pointer;
-	  }
+	}
 
-	  .empty {
+	.empty {
 		color: var(--muted);
 		margin: 0;
-	  }
+	}
 
-	  @media (max-width: 860px) {
+	@media (max-width: 860px) {
 		body {
-		  padding-top: 88px;
+		padding-top: 88px;
 		}
 
 		.side-nav {
-		  left: 12px;
-		  right: 12px;
-		  top: 12px;
+		left: 12px;
+		right: 12px;
+		top: 12px;
 		}
 
 		.nav-select {
-		  flex: 1;
+		flex: 1;
 		}
 
 		.stats {
-		  grid-template-columns: 1fr;
+		grid-template-columns: 1fr;
 		}
 
 		.form-grid {
-		  grid-template-columns: 1fr;
+		grid-template-columns: 1fr;
 		}
 
 		.row {
-		  grid-template-columns: 1fr;
-		  gap: 6px;
+		grid-template-columns: 1fr;
+		gap: 6px;
 		}
 
 		.note {
-		  max-width: none;
+		max-width: none;
 		}
-	  }
+	}
 	</style>
 	<link rel="stylesheet" href="modern.css" />
-  </head>
-  <body>
+</head>
+<body>
 	<nav class="top-tabs" aria-label="Main navigation">
-	  <a class="top-tab" href="index.html">Planner</a>
-	  <a class="top-tab" href="coursework.html">Coursework</a>
-	  <a class="top-tab active" href="money.html">Money</a>
-	  <a class="top-tab" href="habit.html">Habit</a>
+	<a class="top-tab" href="index.html">Planner</a>
+	<a class="top-tab" href="coursework.html">Coursework</a>
+	<a class="top-tab active" href="money.html">Money</a>
+	<a class="top-tab" href="habit.html">Habit</a>
 	</nav>
 
 	<main class="container">
-	  <section class="card">
+	<section class="card">
 		<h1>Money Tracker</h1>
 		<p class="subtitle">Track your expenses and see quick totals.</p>
 		<div class="stats">
-		  <div class="stat">
+		<div class="stat">
 			<p class="stat-label">Total Spent</p>
 			<p id="totalSpent" class="stat-value">$0.00</p>
-		  </div>
-		  <div class="stat">
+		</div>
+		<div class="stat">
 			<p class="stat-label">This Month</p>
 			<p id="monthSpent" class="stat-value">$0.00</p>
-		  </div>
-		  <div class="stat">
+		</div>
+		<div class="stat">
 			<p class="stat-label">Entries</p>
 			<p id="entryCount" class="stat-value">0</p>
-		  </div>
 		</div>
-	  </section>
+		</div>
+	</section>
 
-	  <section class="card">
+	<section class="card">
 		<h2>Add Expense</h2>
 		<div class="form-grid">
-		  <div class="field">
+		<div class="field">
 			<label for="amountInput">Amount</label>
 			<input
-			  id="amountInput"
-			  type="number"
-			  step="0.01"
-			  min="0"
-			  placeholder="12.50"
+			id="amountInput"
+			type="number"
+			step="0.01"
+			min="0"
+			placeholder="12.50"
 			/>
-		  </div>
-		  <div class="field">
+		</div>
+		<div class="field">
 			<label for="categoryInput">Category</label>
 			<select id="categoryInput">
-			  <option value="Food">Food</option>
-			  <option value="School">School</option>
-			  <option value="Transport">Transport</option>
-			  <option value="Shopping">Shopping</option>
-			  <option value="Entertainment">Entertainment</option>
-			  <option value="Other">Other</option>
+			<option value="Food">Food</option>
+			<option value="School">School</option>
+			<option value="Transport">Transport</option>
+			<option value="Shopping">Shopping</option>
+			<option value="Entertainment">Entertainment</option>
+			<option value="Other">Other</option>
 			</select>
-		  </div>
-		  <div class="field">
+		</div>
+		<div class="field">
 			<label for="dateInput">Date</label>
 			<input id="dateInput" type="date" />
-		  </div>
-		  <div class="field full">
+		</div>
+		<div class="field full">
 			<label for="noteInput">Note</label>
 			<input
-			  id="noteInput"
-			  type="text"
-			  maxlength="120"
-			  placeholder="Optional note"
+			id="noteInput"
+			type="text"
+			maxlength="120"
+			placeholder="Optional note"
 			/>
-		  </div>
+		</div>
 		</div>
 		<div class="actions">
-		  <button id="addExpenseBtn" class="btn" type="button">
+		<button id="addExpenseBtn" class="btn" type="button">
 			Add Expense
-		  </button>
-		  <button id="clearAllBtn" class="btn btn-secondary" type="button">
+		</button>
+		<button id="clearAllBtn" class="btn btn-secondary" type="button">
 			Clear All
-		  </button>
+		</button>
 		</div>
-	  </section>
+	</section>
 
-	  <section class="card">
+	<section class="card">
 		<h2>Expenses</h2>
 		<ul id="expenseList" class="list"></ul>
 		<p id="emptyState" class="empty">No expenses recorded yet.</p>
-	  </section>
+	</section>
 	</main>
 
 	<script>
-	  const pageSelect = document.getElementById("pageSelect");
-	  const goPageBtn = document.getElementById("goPageBtn");
-	  const amountInput = document.getElementById("amountInput");
-	  const categoryInput = document.getElementById("categoryInput");
-	  const dateInput = document.getElementById("dateInput");
-	  const noteInput = document.getElementById("noteInput");
-	  const addExpenseBtn = document.getElementById("addExpenseBtn");
-	  const clearAllBtn = document.getElementById("clearAllBtn");
-	  const expenseList = document.getElementById("expenseList");
-	  const emptyState = document.getElementById("emptyState");
-	  const totalSpent = document.getElementById("totalSpent");
-	  const monthSpent = document.getElementById("monthSpent");
-	  const entryCount = document.getElementById("entryCount");
+	const pageSelect = document.getElementById("pageSelect");
+	const goPageBtn = document.getElementById("goPageBtn");
+	const amountInput = document.getElementById("amountInput");
+	const categoryInput = document.getElementById("categoryInput");
+	const dateInput = document.getElementById("dateInput");
+	const noteInput = document.getElementById("noteInput");
+	const addExpenseBtn = document.getElementById("addExpenseBtn");
+	const clearAllBtn = document.getElementById("clearAllBtn");
+	const expenseList = document.getElementById("expenseList");
+	const emptyState = document.getElementById("emptyState");
+	const totalSpent = document.getElementById("totalSpent");
+	const monthSpent = document.getElementById("monthSpent");
+	const entryCount = document.getElementById("entryCount");
 
-	  const STORAGE_KEY = "moneyExpenses";
+	const STORAGE_KEY = "moneyExpenses";
 
-	  function goToSelectedPage() {
+	function goToSelectedPage() {
 		const selected = pageSelect?.value;
 		if (!selected) return;
 		window.location.href = selected;
-	  }
+	}
 
-	  function loadExpenses() {
+	function loadExpenses() {
 		try {
-		  const raw = localStorage.getItem(STORAGE_KEY);
-		  const parsed = raw ? JSON.parse(raw) : [];
-		  return Array.isArray(parsed) ? parsed : [];
+		const raw = localStorage.getItem(STORAGE_KEY);
+		const parsed = raw ? JSON.parse(raw) : [];
+		return Array.isArray(parsed) ? parsed : [];
 		} catch {
-		  return [];
+		return [];
 		}
-	  }
+	}
 
-	  function saveExpenses(expenses) {
+	function saveExpenses(expenses) {
 		localStorage.setItem(STORAGE_KEY, JSON.stringify(expenses));
-	  }
+	}
 
-	  function formatCurrency(value) {
+	function formatCurrency(value) {
 		return new Intl.NumberFormat(undefined, {
-		  style: "currency",
-		  currency: "CAD",
+		style: "currency",
+		currency: "CAD",
 		}).format(value);
-	  }
+	}
 
-	  function getCurrentMonthKey() {
+	function getCurrentMonthKey() {
 		const now = new Date();
 		return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
-	  }
+	}
 
-	  function renderStats(expenses) {
+	function renderStats(expenses) {
 		const total = expenses.reduce(
-		  (sum, item) => sum + Number(item.amount || 0),
-		  0,
+		(sum, item) => sum + Number(item.amount || 0),
+		0,
 		);
 		const monthKey = getCurrentMonthKey();
 		const monthTotal = expenses
-		  .filter((item) => String(item.date || "").startsWith(monthKey))
-		  .reduce((sum, item) => sum + Number(item.amount || 0), 0);
+		.filter((item) => String(item.date || "").startsWith(monthKey))
+		.reduce((sum, item) => sum + Number(item.amount || 0), 0);
 
 		totalSpent.textContent = formatCurrency(total);
 		monthSpent.textContent = formatCurrency(monthTotal);
 		entryCount.textContent = String(expenses.length);
-	  }
+	}
 
 	function renderExpenses() {
 		const expenses = loadExpenses();
@@ -486,21 +486,21 @@
 
 	dateInput.value = new Date().toISOString().slice(0, 10);
 
-	  goPageBtn?.addEventListener("click", goToSelectedPage);
-	  pageSelect?.addEventListener("change", goToSelectedPage);
-	  addExpenseBtn?.addEventListener("click", addExpense);
-	  clearAllBtn?.addEventListener("click", clearAll);
-	  amountInput?.addEventListener("keydown", (event) => {
+	goPageBtn?.addEventListener("click", goToSelectedPage);
+	pageSelect?.addEventListener("change", goToSelectedPage);
+	addExpenseBtn?.addEventListener("click", addExpense);
+	clearAllBtn?.addEventListener("click", clearAll);
+	amountInput?.addEventListener("keydown", (event) => {
 		if (event.key === "Enter") addExpense();
-	  });
+	});
 
-	  expenseList?.addEventListener("click", (event) => {
+	expenseList?.addEventListener("click", (event) => {
 		const button = event.target.closest(".delete");
 		if (!button) return;
 		deleteExpense(button.dataset.id);
-	  });
+	});
 
-	  renderExpenses();
+	renderExpenses();
 	</script>
-  </body>
+</body>
 </html>
