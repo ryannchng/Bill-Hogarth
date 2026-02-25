@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Planner</title>
+  <style>
+    :root {
+      --bg: #f6f9ff;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #64748b;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --border: #dbe5f1;
+      --today: #dbeafe;
+      --done: #94a3b8;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      color: var(--text);
+      background: linear-gradient(180deg, #edf4ff 0%, var(--bg) 100%);
+      padding: 24px;
+    }
+
+    .layout {
+      width: 100%;
+      max-width: 980px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 20px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
+    }
+
+    .side-nav {
+      position: fixed;
+      right: 18px;
+      top: 18px;
+      z-index: 20;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.12);
+    }
+
+    .nav-select {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px;
+      font-size: 0.9rem;
+      color: var(--text);
+      background: #fff;
+      min-width: 165px;
+    }
+
+    .side-go {
+      padding: 8px 12px;
+      font-size: 0.85rem;
+    }
+
+    h1 {
+      margin-top: 0;
+      margin-bottom: 6px;
+      font-size: 1.8rem;
+    }
+
+    .subtitle {
+      margin-top: 0;
+      margin-bottom: 20px;
+      color: var(--muted);
+    }
+
+    .calendar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .month-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    .nav-group {
+      display: flex;
+      gap: 8px;
+    }
+
+    button,
+    .add-btn {
+      border: 0;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #fff;
+      background: var(--accent);
+      cursor: pointer;
+      transition: background-color 150ms ease;
+    }
+
+    button:hover,
+    .add-btn:hover {
+      background: var(--accent-hover);
+    }
+
+    .nav-btn {
+      min-width: 42px;
+      padding: 8px 0;
+    }
+
+    .weekday-row,
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .weekday {
+      font-size: 0.8rem;
+      text-align: center;
+      color: var(--muted);
+      font-weight: 600;
+      padding-bottom: 2px;
+    }
+
+    .day-cell {
+      min-height: 46px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      background: #fff;
+      font-weight: 600;
+    }
+
+    .day-outside {
+      color: #9ca3af;
+      background: #f8fafc;
+    }
+
+    .day-today {
+      background: var(--today);
+      border-color: #93c5fd;
+      color: #1e40af;
+    }
+
+    .todo-title {
+      margin: 0 0 6px;
+      font-size: 1.2rem;
+    }
+
+    .todo-date {
+      margin: 0 0 16px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .add-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .add-input {
+      flex: 1;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 0.95rem;
+    }
+
+    .todo-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 8px;
+    }
+
+    .todo-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #fff;
+    }
+
+    .todo-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .todo-text {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .todo-done {
+      text-decoration: line-through;
+      color: var(--done);
+    }
+
+    .delete-btn {
+      border: 0;
+      border-radius: 8px;
+      background: #ef4444;
+      color: #fff;
+      padding: 7px 10px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .empty {
+      color: var(--muted);
+      font-size: 0.92rem;
+      margin-top: 8px;
+    }
+
+    .full-span {
+      grid-column: 1 / -1;
+    }
+
+    .embed-note {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .calendar-embed {
+      width: 100%;
+      min-height: 620px;
+      border: 1px solid #777;
+      border-radius: 10px;
+      background: #fff;
+    }
+
+    @media (max-width: 860px) {
+      body {
+        padding-top: 88px;
+      }
+
+      .side-nav {
+        left: 12px;
+        right: 12px;
+        top: 12px;
+      }
+
+      .nav-select {
+        flex: 1;
+      }
+
+      .layout {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="side-nav" aria-label="Quick navigation">
+    <select id="pageSelect" class="nav-select">
+      <option value="index.html">Planner</option>
+      <option value="coursework.html">Coursework</option>
+    </select>
+    <button id="goPageBtn" class="side-go" type="button">Go</button>
+  </nav>
+
+  <main class="layout">
+    <section class="card">
+      <h1>Student Planner</h1>
+      <p class="subtitle">Calendar and today's tasks in one place.</p>
+      <div class="calendar-header">
+        <div id="monthTitle" class="month-title"></div>
+        <div class="nav-group">
+          <button id="prevMonthBtn" class="nav-btn" type="button" aria-label="Previous month">&lt;</button>
+          <button id="nextMonthBtn" class="nav-btn" type="button" aria-label="Next month">&gt;</button>
+        </div>
+      </div>
+      <div class="weekday-row" id="weekdayRow"></div>
+      <div class="calendar-grid" id="calendarGrid" aria-label="Calendar"></div>
+    </section>
+
+    <section class="card">
+      <h2 class="todo-title">Today To-Do List</h2>
+      <p class="todo-date" id="todayDate"></p>
+      <div class="add-row">
+        <input id="todoInput" class="add-input" type="text" placeholder="Add a task for today" />
+        <button id="addTodoBtn" class="add-btn" type="button">Add</button>
+      </div>
+      <ul id="todoList" class="todo-list"></ul>
+      <p id="emptyState" class="empty">No tasks yet for today.</p>
+    </section>
+
+    <!--
+    <section class="card full-span">
+      <h2 class="todo-title">Google Calendar Integration</h2>
+      <p class="embed-note">Embedded calendar view from your provided Google Calendar link.</p>
+      <iframe
+        class="calendar-embed"
+        src="https://calendar.google.com/calendar/embed?height=600&wkst=1&ctz=America%2FToronto&showPrint=0&src=NDQwMDEwNjA4QGdhcHBzLnlyZHNiLmNh&src=Y19jbGFzc3Jvb20zYzU2MzNiN0Bncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=Y19jbGFzc3Jvb21lM2IzY2JiMEBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=Y19jbGFzc3Jvb204ZDU1MmIzY0Bncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=Y19jbGFzc3Jvb201ODRlNzAzMEBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=Y19jbGFzc3Jvb21mMGE0OTZkMEBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=Y19jbGFzc3Jvb21kMDI4M2RmNEBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=Y19jbGFzc3Jvb21kN2NkNjdlMUBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=Y19jbGFzc3Jvb21kZDBjYjlkY0Bncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=Y19jbGFzc3Jvb20yNDUyMTUzNEBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=Y19jbGFzc3Jvb21jZmNjMGVkOUBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=ZW4uY2FuYWRpYW4jaG9saWRheUBncm91cC52LmNhbGVuZGFyLmdvb2dsZS5jb20&src=Y19jbGFzc3Jvb21jNGI5Nzc1N0Bncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=Y19jbGFzc3Jvb21kZGQ1ODAwNEBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=Y19jbGFzc3Jvb21hZTAxYWUwZkBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=Z2FwcHMueXJkc2IuY2FfY2xhc3Nyb29tMWFhMWE1ZWRAZ3JvdXAuY2FsZW5kYXIuZ29vZ2xlLmNvbQ&src=Z2FwcHMueXJkc2IuY2FfbnVodWJlZTk4czhtcGZtcjlyY29lN3MydmNAZ3JvdXAuY2FsZW5kYXIuZ29vZ2xlLmNvbQ&src=Y19jbGFzc3Jvb200ZWI1ZmNhNkBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=Y19jbGFzc3Jvb203OGZiZmU1ZEBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=Y19jbGFzc3Jvb20yMjE3ZmZjYkBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=Y19jbGFzc3Jvb21iNTlhNmI5OUBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=Y19jbGFzc3Jvb20xNTg2NTFkZkBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=Y19jbGFzc3Jvb21lMTU0MmY4YUBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=Y19jbGFzc3Jvb205NTJmZGVkZUBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=Y19jbGFzc3Jvb21iYjRjMTcyN0Bncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=Y19jbGFzc3Jvb21mMWQ1ODRjZkBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=Y19jbGFzc3Jvb21hZmIwMTBkOEBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&color=%23039be5&color=%23202124&color=%231967d2&color=%23202124&color=%237627bb&color=%23137333&color=%231967d2&color=%231967d2&color=%231967d2&color=%23c26401&color=%23c26401&color=%230b8043&color=%23174ea6&color=%23007b83&color=%23007b83&color=%23202124&color=%23f4511e&color=%23007b83&color=%237627bb&color=%23b80672&color=%23137333&color=%23174ea6&color=%237627bb&color=%23007b83&color=%23137333&color=%23202124&color=%231967d2"
+        frameborder="0"
+        scrolling="no"
+        loading="lazy"
+        title="Google Calendar Embed"></iframe>
+    </section>
+    -->
+  </main>
+
+  <script src="main.js"></script>
+</body>
+</html>
